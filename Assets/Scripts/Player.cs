@@ -8,14 +8,20 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 5.0f;
     [SerializeField]
+    private float _jump_speed = 100.0f;
+    [SerializeField]
+    private float _gravity = -9.8f;
+    [SerializeField]
     private Transform _cam;
 
     private CharacterController _controller;
+    private float Jump;
 
     // Start is called before the first frame update
     void Start()
     {
-        _controller = GetComponent<CharacterController>();        
+        _controller = GetComponent<CharacterController>();  
+        Jump = 1.0f;      
     }
 
     // Update is called once per frame
@@ -23,9 +29,13 @@ public class Player : MonoBehaviour
     {
         float Horizontal = Input.GetAxis("Horizontal") * _speed * Time.deltaTime;
         float Vertical = Input.GetAxis("Vertical") * _speed * Time.deltaTime;
+        if (Input.GetButtonDown("Jump")) {
+            Jump += _jump_speed * Time.deltaTime;
+        } else if (Jump > _gravity * Time.deltaTime) {
+            Jump += _gravity * Time.deltaTime;
+        }
 
-        Vector3 Movement = _cam.transform.right * Horizontal + _cam.transform.forward * Vertical;
-        Movement.y = 0f;
+        Vector3 Movement = _cam.transform.right * Horizontal + _cam.transform.forward * Vertical + Vector3.up * Jump;
 
 
         _controller.Move(Movement);
