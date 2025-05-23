@@ -8,8 +8,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 5.0f;
     [SerializeField]
-    private float _jump_speed = 100.0f;
-    [SerializeField]
     private float _gravity = -9.8f;
     [SerializeField]
     private Transform _cam;
@@ -29,14 +27,9 @@ public class Player : MonoBehaviour
     {
         float Horizontal = Input.GetAxis("Horizontal") * _speed * Time.deltaTime;
         float Vertical = Input.GetAxis("Vertical") * _speed * Time.deltaTime;
-        if (Input.GetButtonDown("Jump")) {
-            Jump += _jump_speed * Time.deltaTime;
-        } else if (Jump > _gravity * Time.deltaTime) {
-            Jump += _gravity * Time.deltaTime;
-        }
-
-        Vector3 Movement = _cam.transform.right * Horizontal + _cam.transform.forward * Vertical + Vector3.up * Jump;
-
+        
+        Vector3 Movement = _cam.transform.right * Horizontal + _cam.transform.forward * Vertical;
+        Movement = Vector3.ProjectOnPlane(Movement, new Vector3(0, 1, 0));
 
         _controller.Move(Movement);
 

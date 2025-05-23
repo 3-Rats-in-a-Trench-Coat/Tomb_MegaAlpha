@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class Camera : MonoBehaviour
 {
-private const float YMin = -50.0f;
+    private const float YMin = -50.0f;
     private const float YMax = 50.0f;
 
     public Transform lookAt;
 
     public Transform Player;
 
-    public float distance = 10.0f;
+    public float distance_max = 5.0f;
+    public float distance_delta = 0.01f;
+    public float distance = 5.0f;
     private float currentX = 0.0f;
     private float currentY = 0.0f;
     public float sensivity = 4.0f;
+
+    private bool isColliding;
 
 
     // Start is called before the first frame update
@@ -22,6 +26,16 @@ private const float YMin = -50.0f;
     {
       
 
+    }
+
+    void OnTriggerStay()
+    {
+        isColliding = true;
+    }
+
+    void OnTriggerExit()
+    {
+        isColliding = false;
     }
 
     // Update is called once per frame
@@ -33,10 +47,21 @@ private const float YMin = -50.0f;
 
         currentY = Mathf.Clamp(currentY, YMin, YMax);
 
+        if (isColliding && distance >= 0)
+        {
+            distance -= distance_delta;
+        }
+        else if (!isColliding && distance < distance_max)
+        {
+            distance += distance_delta;
+        }
+        
         Vector3 Direction = new Vector3(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
         transform.position = lookAt.position + rotation * Direction;
 
         transform.LookAt(lookAt.position);
+
     }
+    
 }
